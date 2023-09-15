@@ -36,22 +36,31 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col">
-      {messages.map((m, i) => (
-        <div key={i}>
-          <p>{m.name}</p>
-          <p>{m.content}</p>
-          <time>{m.timeSent}</time>
-        </div>
-      ))}
-      <form onSubmit={handleSubmit}>
+    <main className="flex min-h-screen flex-col justify-between p-12">
+      <div className="grow ">
+        {messages.map((m) => (
+          <div className="chat chat-end " key={m.timeSent}>
+            <div className="chat-header">{m.name}</div>
+            <div className="chat-bubble chat-bubble-secondary">{m.content}</div>
+            <div className="chat-footer opacity-50">
+              <time className="text-xs opacity-50">{m.timeSent}</time>
+            </div>
+          </div>
+        ))}
+      </div>
+      <form
+        onSubmit={handleSubmit}
+        className="w-full flex gap-2 justify-center"
+      >
         <input
-          className="dark:text-white"
+          className="input"
           type="text"
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
-        <button type="submit">Send</button>
+        <button type="submit" className="btn">
+          Send
+        </button>
       </form>
     </main>
   );
