@@ -17,7 +17,7 @@ export class MessageGateway
   @WebSocketServer()
   server: Server;
 
-  private userList: string[] = [];
+  private clients: { client: Socket; username: string }[] = [];
 
   @SubscribeMessage('user-check')
   handleUserCheck(client: Socket, payload: string): void {
@@ -46,17 +46,11 @@ export class MessageGateway
   }
 
   handleConnection(client: Socket, ...args: any[]) {
-    console.log('Client Connected', client.id);
-    this.server.emit('connection-log', {
-      type: 'connection',
-      id: client.id,
-    });
+    this.clients.push({ client, username: '' });
   }
   handleDisconnect(client: Socket) {
-    console.log('Client Disconnected', client.id);
-    this.server.emit('connection-log', {
-      type: 'disconnection',
-      id: client.id,
-    });
+    this.clients = this.clients.filter(
+      ({ client: _client }) => _client.id !== client.id,
+    );
   }
 }
