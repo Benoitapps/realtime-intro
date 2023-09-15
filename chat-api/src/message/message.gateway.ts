@@ -17,6 +17,16 @@ export class MessageGateway
   @WebSocketServer()
   server: Server;
 
+  private userList: string[] = [];
+
+  @SubscribeMessage('user-check')
+  handleUserCheck(client: Socket, payload: string): void {
+    client.emit('user-exist', {
+      username: payload,
+      exists: this.userList.some((user) => user === payload),
+    });
+  }
+
   @SubscribeMessage('messages')
   handleMessage(client: Socket, payload: IMessage): void {
     this.server.emit('messages', payload);

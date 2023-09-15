@@ -43,7 +43,9 @@ export default function Home() {
           type="text"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className="input input-info"
+          className={`input input-info ${
+            username.length > 3 ? "input-success" : "input-error"
+          }`}
         />
         <button className="btn btn-info" type="submit">
           Set Username
