@@ -27,6 +27,19 @@ export class MessageGateway
     });
   }
 
+  @SubscribeMessage('user-add')
+  handleUserAdd(client: Socket, payload: string): void {
+    if (this.userList.some((user) => user === payload)) {
+      client.emit('user-exist', {
+        username: payload,
+        exists: true,
+      });
+
+      return;
+    }
+    this.userList.push(payload);
+  }
+
   @SubscribeMessage('messages')
   handleMessage(client: Socket, payload: IMessage): void {
     this.server.emit('messages', payload);

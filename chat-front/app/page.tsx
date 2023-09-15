@@ -9,6 +9,7 @@ export default function Home() {
   const [text, setText] = useState("");
   const [messages, setMessages] = useState<any[]>([]);
   const [username, setUsername] = useState("");
+  const [exist, setExist] = useState(true);
 
   useEffect(() => {
     socket.on("connect", () => {
@@ -22,7 +23,19 @@ export default function Home() {
     socket.on("messages", (data) => {
       setMessages((prev) => [...prev, data]);
     });
+
+    socket.on("user-exist", (data) => {
+      setExist(data.exists);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
   }, []);
+
+  useEffect(() => {
+    socket.emit('user-check', username);
+  }, [username])
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -36,21 +49,27 @@ export default function Home() {
     setText("");
   };
 
+  const handleUserJoin = (e: any) => {
+    e.preventDefault();
+
+    socket.emit("user-add", username);
+  };
+
   return (
     <main className="flex min-h-screen flex-col justify-between p-12">
-      <div>
+      <form onSubmit={handleUserJoin}>
         <input
           type="text"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           className={`input input-info ${
-            username.length > 3 ? "input-success" : "input-error"
+            !exist && username.length > 3 ? "input-success" : "input-error"
           }`}
         />
         <button className="btn btn-info" type="submit">
           Set Username
         </button>
-      </div>
+      </form>
       <div className="grow ">
         {messages.map((m) => {
           if (m.name === username) {
